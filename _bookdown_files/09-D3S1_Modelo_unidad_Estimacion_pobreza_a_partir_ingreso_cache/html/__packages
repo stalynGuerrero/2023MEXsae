@@ -1,0 +1,16 @@
+printr
+kableExtra
+tidyverse
+ggplot2
+tibble
+tidyr
+readr
+purrr
+dplyr
+stringr
+forcats
+lubridate
+patchwork
+magrittr
+ggalt
+reshape2
