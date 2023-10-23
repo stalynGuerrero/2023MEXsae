@@ -226,7 +226,7 @@ p1 <- (p1_dam)/(p1_anotes + p1_edad)
 ```
 
 ```{r echo=FALSE, out.width = "500px", out.height="250px",fig.align='center'}
-knitr::include_graphics("Recursos/Día2/Sesion4/0Recursos/Bernoulli/plot_comp.png")
+knitr::include_graphics("Recursos/Día2/Sesion4/0Recursos/plot_comp.png")
 ```
 
 Evaluando interacciones en la encuesta 

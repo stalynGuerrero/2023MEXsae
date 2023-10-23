@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>8.3 Validación de encuesta frente al censo. | Fortalecimiento de capacidades en Técnicas de Estimación en Áreas Pequeñas con enfoque Bayesiano para la desagregación de datos</title>
   <meta name="description" content="Taller de instalación de capacidades en SAE." />
-  <meta name="generator" content="bookdown 0.34 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.36 and GitBook 2.6.7" />
 
   <meta property="og:title" content="8.3 Validación de encuesta frente al censo. | Fortalecimiento de capacidades en Técnicas de Estimación en Áreas Pequeñas con enfoque Bayesiano para la desagregación de datos" />
   <meta property="og:type" content="book" />
@@ -23,7 +23,7 @@
 <meta name="author" content="Andrés Gutiérrez, Stalyn Guerrero" />
 
 
-<meta name="date" content="2023-10-10" />
+<meta name="date" content="2023-10-23" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -332,7 +332,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb162-17"><a href="validación-de-encuesta-frente-al-censo..html#cb162-17" tabindex="-1"></a><span class="co"># ggsave(plot = p1,</span></span>
 <span id="cb162-18"><a href="validación-de-encuesta-frente-al-censo..html#cb162-18" tabindex="-1"></a><span class="co">#        filename = &quot;Recursos/Día2/Sesion4/0Recursos/plot_comp.png&quot;,</span></span>
 <span id="cb162-19"><a href="validación-de-encuesta-frente-al-censo..html#cb162-19" tabindex="-1"></a><span class="co">#        scale = 2)</span></span></code></pre></div>
-<p><img src="Recursos/Día2/Sesion4/0Recursos/Bernoulli/plot_comp.png" width="500px" height="250px" style="display: block; margin: auto;" /></p>
+<p><img src="Recursos/D%C3%ADa2/Sesion4/0Recursos/plot_comp.png" width="500px" height="250px" style="display: block; margin: auto;" /></p>
 <p>Evaluando interacciones en la encuesta</p>
 <div class="sourceCode" id="cb163"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb163-1"><a href="validación-de-encuesta-frente-al-censo..html#cb163-1" tabindex="-1"></a>encuesta_mrp<span class="sc">$</span>pobreza <span class="ot">&lt;-</span> encuesta_mrp<span class="sc">$</span>logingreso</span>
 <span id="cb163-2"><a href="validación-de-encuesta-frente-al-censo..html#cb163-2" tabindex="-1"></a>(<span class="fu">plot_interaction</span>(<span class="at">dat_encuesta =</span> encuesta_mrp, <span class="at">by =</span> <span class="st">&quot;sexo&quot;</span>,<span class="at">by2 =</span> <span class="st">&quot;area&quot;</span>)<span class="sc">/</span></span>

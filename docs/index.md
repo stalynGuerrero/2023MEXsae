@@ -1,7 +1,7 @@
 --- 
 title: "Fortalecimiento de capacidades en Técnicas de Estimación en Áreas Pequeñas con enfoque Bayesiano para la desagregación de datos"
 author: "Andrés Gutiérrez^[Experto Regional en Estadísticas Sociales - Comisión Económica para América Latina y el Caribe (CEPAL) -  andres.gutierrez@cepal.org], Stalyn Guerrero^[Consultor - Comisión Económica para América Latina y el Caribe (CEPAL), guerrerostalyn@gmail.com]"
-date: "2023-10-10"
+date: "2023-10-23"
 documentclass: book
 # bibliography: [CEPAL.bib]
 biblio-style: apalike
@@ -39,12 +39,12 @@ output:
 ## Material del curso {-}
 
 
-- En el siguiente enlace encontrará material bibliográfico complementario (Libros, presentaciones, casos de estudio y manuales de instalación) [Descargar](https://github.com/psirusteam/2023MEXsae/tree/main/Recursos/Docs)
+- En el siguiente enlace encontrará material bibliográfico complementario (Libros, presentaciones, casos de estudio y manuales de instalación) [Descargar](https://github.com/stalynGuerrero/2023MEXsae/tree/main/Recursos/Docs)
 
 -   En el siguiente enlace encontrará las rutinas de R desarrolladas para el taller.
-[Descargar](https://github.com/psirusteam/2023MEXsae/tree/main/Recursos)
+[Descargar](https://github.com/stalynGuerrero/2023MEXsae/tree/main/Recursos)
 
 # Día 1 - Sesión 1- No dejar a nadie atrás - ODS y la Agenda 2030 
 
-[Ver presentación](https://github.com/psirusteam/2023MEXsae/blob/main/Recursos/D%C3%ADa1/Sesion1/SAE-0%2C-SDGs-and-Surveys.pdf)
+[Ver presentación](https://github.com/stalynGuerrero/2023MEXsae/blob/main/Recursos/D%C3%ADa1/Sesion1/SAE-0%2C-SDGs-and-Surveys.pdf)
 

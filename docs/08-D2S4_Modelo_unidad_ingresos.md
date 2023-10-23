@@ -368,7 +368,7 @@ p1 <- (p1_dam)/(p1_anotes + p1_edad)
 #        scale = 2)
 ```
 
-<img src="Recursos/Día2/Sesion4/0Recursos/Bernoulli/plot_comp.png" width="500px" height="250px" style="display: block; margin: auto;" />
+<img src="Recursos/Día2/Sesion4/0Recursos/plot_comp.png" width="500px" height="250px" style="display: block; margin: auto;" />
 
 Evaluando interacciones en la encuesta 
 
