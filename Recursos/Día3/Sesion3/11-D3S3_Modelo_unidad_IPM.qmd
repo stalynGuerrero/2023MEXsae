@@ -1,0 +1,1041 @@
+# Día 3 - Sesión 4- Estimación del Índice de Privación Multidimensional (IPM)
+
+```{r setup, include=FALSE, message=FALSE, error=FALSE, warning=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  cache = TRUE
+)
+library(printr)
+library(kableExtra)
+library(tidyverse)
+tba <- function(dat, cap = NA){
+  kable(dat,
+      format = "html", digits =  4,
+      caption = cap) %>% 
+     kable_styling(bootstrap_options = "striped", full_width = F)%>%
+         kable_classic(full_width = F, html_font = "Arial Narrow")
+}
+```
+
+
+
+-   La pobreza es, y ha sido, uno de los temas principales en las agendas nacionales e internacionales de los países durante décadas. Un ejemplo reciente es el primer objetivo de la agenda **2030** para el Desarrollo Sostenible (ODS): __“Poner fin a la pobreza en todas sus formas en todo el mundo”__, así como su indicador 1.2.2 que mide __“la proporción de hombres, mujeres y niños de todas las edades que viven en pobreza en todas sus dimensiones según las definiciones nacionales”__
+
+-   Tradicionalmente los organismos nacionales e internacionales exigen la medida de pobreza unidimensional basada en ingresos y/o gastos. 
+
+-   La pobreza es un fenómeno complejo que debe ser analizado considerando un conjunto de factores y no solo el monetario. 
+
+-   En está ocasión se aborda el problema multidimensional de la pobreza utilizando métodos de áreas pequeñas proporcionando una estimación del índice de privación multidimensional (IPM) en Colombia. 
+
+## Índice de Pobreza Multidimensional
+
+El Índice de Pobreza Multidimensional (IPM) es una medida que captura la pobreza desde múltiples dimensiones. Se calcula utilizando ponderaciones y umbrales en función de diferentes variables o indicadores que reflejan aspectos diversos de la calidad de vida.
+
+Ahora el IPM es un caso particular de la metodología de la tasa de pobreza ajustada FGT (Foster, Greer y Thorbecke, 1984) de medidas de pobreza unidimensionales. Al igual que cada medida FGT se puede ver como la media de un vector apropiado construido a partir de los datos originales y censurado usando la línea de pobreza, la tasa de pobreza ajustada es la media del vector de puntuación de privación censurado. 
+
+$$
+IPM = \frac{1}{N}\sum_{i=1}^{N}c_i(z)
+$$
+
+donde,  $N$ es el número de individuos u hogares en la población y $c_i(z)$ es el puntaje de privación censurado de la observación $i$ que esta dado como: 
+
+$$
+c_{i}\left(z\right)=\begin{cases}
+q_i & \text{si } q_i\ge z\\
+0 & \text{si } q < z
+\end{cases}
+$$
+
+
+con 
+$$
+      q_i =  \sum_{k=1}^{K} w_k \cdot y_{i}^{k}  
+$$
+
+Donde:
+
+  -   $K$ es el número de dimensiones o indicadores de la privación.
+  -   $w_k$ es el ponderador asociado a la dimensión $k$.
+  -   $y_{i}^{k}$ es una variable binaria que toma el valor $1$ si el individuo $i$ esta privado  en la dimensión $k$ y $0$ en el caso contrario. 
+  -   $z$ es el umbral para considerar a alguien con multiples privaciones.
+
+Una segunda forma de ver  es en términos de índices parciales, es decir, medidas que proporcionan información básica sobre un solo aspecto de la pobreza. A continuación vemos cada uno de estos componentes:
+  
+
+1.    Headcount Ratio (H)
+
+   Este componente mide la proporción de personas que están privadas en al menos una de las dimensiones consideradas. Matemáticamente, $H$ se calcula como la proporción entre el número de personas privadas y la población total:
+   
+$$
+H = \frac{1}{N} \sum_{i=1}^{N} I\left( q_{i} \ge z \right)= \frac{N\left(z\right)}{N}
+$$
+
+donde $N\left(z\right) =  \sum_{i=1}^{N} I\left( q_{i} \ge z \right)$
+
+2.    Intensity of Deprivation (A) 
+
+Este componente mide la intensidad o gravedad promedio de la privación entre aquellos que están privados. Matemáticamente, $A$ se calcula como el promedio de los indicadoras $y_{i}^{k}$ para aquellos hogares o personas que están privados:   
+  
+$$ 
+A=\sum_{i=1}^{N}\frac{c_{i}\left(z\right)}{N\left(z\right)}  
+$$
+
+
+Luego, el Índice de Pobreza Multidimensional (IPM) se expresa como:
+
+$$
+IPM = H \times A
+$$
+reemplazando las $H$ y $A$ por sus respectivas ecuaciones se tiene que: 
+
+$$
+IPM=\frac{N\left(z\right)}{N}\times\sum_{i=1}^{N}\frac{c_{i}\left(z\right)}{N\left(z\right)}=\frac{1}{N}\sum_{i=1}^{N}c_{i}\left(z\right)
+$$
+
+
+
+## Definición del modelo 
+
+En muchas aplicaciones, la variable de interés en áreas pequeñas puede ser binaria, esto es $y_{dj} = 0$ o $1$ que representa la ausencia (o no) de una característica específica. Para este caso, la estimación objetivo en cada dominio $d = 1,\cdots , D$ es la proporción $\theta_d =\frac{1}{N_d}\sum_{i=1}^{N_d}y_{di}$ de la población que tiene esta característica, siendo $\theta_{di}$ la probabilidad de que una determinada unidad $i$ en el dominio $d$ obtenga el valor $1$. Bajo este escenario, el $\theta_{di}$ con una función de enlace logit se define como: 
+
+$$
+logit(\theta_{di}) = \log \left(\frac{\theta_{di}}{1-\theta_{di}}\right) = \eta_{di} =  \boldsymbol{x}_{di}^{T}\boldsymbol{\beta} + u_{d}
+$$
+con $i=1,\cdots,N_d$, $d=1,\cdots,D$, $\boldsymbol{\beta}$  un vector de parámetros de efecto fijo, y $u_d$ el efecto aleatorio especifico del área para el dominio $d$ con $u_d \sim N\left(0,\sigma^2_u \right)$.  $u_d$ son independiente y $y_{di}\mid u_d \sim Bernoulli(\theta_{di})$ con $E(y_{di}\mid u_d)=\theta_{di}$ y $Var(y_{di}\mid u_d)=\sigma_{di}^2=\theta_{di}(1-\theta_{di})$. Además,  $\boldsymbol{x}_{di}^T$ representa el vector $p\times 1$ de valores de $p$ variables auxiliares. Entonces, $\theta_{di}$ se puede escribir como 
+
+$$
+\theta_{di} = \frac{\exp(\boldsymbol{x}_{di}^T\boldsymbol{\beta} + u_{d})}{1+ \exp(\boldsymbol{x}_{di}^T\boldsymbol{\beta} + u_{d})}
+$$
+De está forma podemos definir distribuciones previas 
+
+$$
+\begin{eqnarray*}
+\beta_k & \sim   & N(0, 10000)\\
+\sigma^2_u &\sim & IG(0.0001,0.0001)
+\end{eqnarray*}
+$$
+El modelo se debe estimar para cada una de las dimensiones. 
+  
+#### Obejtivo {-}
+
+
+Estimar la proporción de personas que presentan la $k-$ésima carencia, es decir, 
+
+$$ 
+P_d = \frac{\sum_{U_d}c_{di}(z)}{N_d}
+$$
+
+Note que, 
+
+$$
+\begin{equation*}
+\bar{Y}_d = P_d =  \frac{\sum_{s_d}c_{di}(z) + \sum_{s^c_d}c_{di}(z)}{N_d} 
+\end{equation*}
+$$
+
+Ahora, el estimador de $P$ esta dado por: 
+
+$$
+\hat{P}_d = \frac{\sum_{s_d}c_{di}(z) + \sum_{s^c_d}\hat{c}_{di}(z)}{N_d}
+$$
+
+donde
+
+$$
+\hat{c}_{di}\left(z\right)=\begin{cases}
+\hat{q}_{di} & \text{si } \hat{q}_{di}\ge z\\
+0 & \text{si } \hat{q}_{di} < z
+\end{cases}
+$$
+
+
+con 
+$$
+      \hat{q}_{di} =  \sum_{k=1}^{K} w_k \cdot \hat{y}_{di}^{k}  
+$$
+
+
+$$\hat{y}_{di}^{k}=E_{\mathscr{M}}\left(y_{di}^{k}\mid\boldsymbol{x}_{d},\boldsymbol{\beta}\right)$$,
+
+con $\mathscr{M}$  la medida de probabilidad inducida por el modelamiento. 
+
+De esta forma se tiene que, 
+
+$$
+\hat{P}_d = \frac{\sum_{U_{d}}\hat{q}_{di}}{N_d}
+$$
+
+#  Estimación del modelo de unidad para variables Binarias
+
+En muchas aplicaciones, la variable de interés en áreas pequeñas puede ser binaria, por ejemplo, $y_{di} = 0$ ó $1$, representando la ausencia (o no) de una característica específica. En el caso binario, la estimación objetivo en cada dominio $d = 1, \dotso, D$ puede ser la proporción $\bar{Y}_d = \pi_d = \frac{1}{N_d} \sum_{i=1}^{N_d} y_{di}$ de la población que tiene esta característica, donde $N=\sum_{d=1}^{D}N_d$ y   $\pi_{di}$ es la probabilidad de que una unidad específica $i$ en el dominio $d$ obtenga el valor 1.
+
+Aunque se han propuesto otros métodos para resultados binarios, como el modelado basado en M-cuantiles (Chambers et al., 2016), en esta aplicación seguimos el enfoque tradicional basado en modelos mixtos lineales generalizados. En este escenario, $\pi_{di}$ se modela con una función de enlace logit definida como:
+
+$$
+\text{logit}(\pi_{di}) = \log \left( \frac{\pi_{di}}{1 - \pi_{di}} \right) = \eta_{di} = \mathbf{x}_{di}^\top \mathbf{\beta} + u_d 
+$$
+
+
+con $i = 1, \ldots, N_d$, $d = 1, \ldots, D$, $\boldsymbol{\beta}$ un vector de parámetros de efectos fijos y $u_d$ el efecto aleatorio específico del área para el dominio $d$ con $u_d \sim N(0, \sigma_u^2)$. Se asume que $u_d$ son independientes y $y_{di} | u_d \sim \text{Bernoulli}(\pi_{di})$ con $E(y_{di} | u_d) = \pi_{di}$ y $\text{Var}(y_{di} | u_d) = \sigma^2_{di} = \pi_{di} (1 - \pi_{di})$. Además, $\mathbf{x}_{di}$ representa el vector $p \times 1$ de valores de las variables auxiliares a nivel de unidad.
+
+Dado que nuestro problema involucra la identificación de privaciones en forma de valores binarios $(0,1)$ en relación con varios indicadores, hemos optado por utilizar un modelo mixto logit Bernoulli a nivel de unidad como punto de partida. Los métodos bayesianos se pueden utilizar para ajustar modelos mixtos logit Bernoulli. Uno de los métodos más comunes es el algoritmo de Markov Chain Monte Carlo (MCMC). Este algoritmo genera muestras de los parámetros del modelo a partir de su distribución posterior, que es la distribución de los parámetros dada la evidencia.
+
+Los métodos bayesianos tienen varias ventajas. En primer lugar, los métodos bayesianos pueden incorporar información previa sobre los parámetros del modelo, lo que puede mejorar la precisión de las estimaciones. En segundo lugar, los métodos bayesianos pueden proporcionar intervalos de credivilidad para los parámetros del modelo, que pueden ser utilizados para hacer inferencias sobre el modelo. En tercer lugar, los métodos bayesianos pueden ser utilizados para generar predicciones del modelo, que pueden ser utilizadas para tomar decisiones.
+
+Sin embargo, los métodos bayesianos también tienen algunas desventajas. Por ejemplo, los métodos bayesianos pueden ser más sensibles a la elección de la distribución a previas, lo que puede dificultar la obtención de estimaciones precisas. Para evitar, eso en nuestro ejercicio se hará uso de distribuciones previas no informativas, es decir, podemos definir distribuciones previas 
+
+$$
+\begin{eqnarray*}
+\beta_m & \sim   & N(0, 10000)\\
+\sigma^2_u &\sim & IG(0.0001,0.0001)
+\end{eqnarray*}
+$$
+El modelo se debe estimar para cada una de las dimensiones. 
+  
+
+## Estimación de $\pi^{k}_{di}$
+
+La estimación de $\pi^{k}_{di}$ refleja la probabilidad de que una unidad específica $i$ en el dominio $d$ obtenga el valor 1 en la dimensión $k$. Para llevar a cabo esta estimación, seguimos el siguiente procedimiento:
+
+$$
+\bar{Y}^{k}_d = \pi^{k}_d = \frac{1}{N_d} \sum_{i=1}^{N_d} y^{k}_{di}
+$$
+
+Aquí, $y^{k}_{di}$ puede tomar los valores 0 ó 1, representando la ausencia (o no) de una característica específica. Ahora, podemos dividir la suma en dos partes: $s_d$, que representa las unidades observadas en una muestra, y $s_d^c$, que son las unidades no observados. Por lo tanto,
+
+$$
+\begin{equation*}
+\bar{Y}^{k}_d = \pi^{k}_d =  \frac{1}{N_d}\left(\sum_{s_d}y^{k}_{di} + \sum_{s^c_d}y^{k}_{di} \right) 
+\end{equation*}
+$$
+Ahora, suponga que mediante un modelo de unidad es posible realizar la predicción de  $y^{k}_{di}$ para las unidades no observadas. De esta manera, el estimador de $\pi^{k}_d$ se expresa como:
+
+$$
+\hat{\pi}^{k}_d = \frac{1}{N_d}\left( \sum_{s_d}y^{k}_{di} + \sum_{s^c_d}\hat{y}^{k}_{di} \right)
+$$
+
+Donde,
+
+$$\hat{y}^{k}_{di}=E_{\mathscr{M}}\left(y^{k}_{di}\mid\boldsymbol{x}_{d},\boldsymbol{\beta}\right)$$
+
+Aquí, $\mathscr{M}$ hace referencia a la medida de probabilidad inducida por el modelo. Sin embargo, en la práctica, individualizar a las unidades observadas  y no observadas en una encuesta de hogares puede ser difícil. Por lo tanto, una alternativa es realizar la predicción $\hat{y}^{k}_{di}$ para todas las observaciones en el universo. De esta manera, la estimación $\hat{\pi}^{k}_d$ se simplifica a:
+
+$$
+\hat{\pi}^{k}_d = \frac{1}{N_d}\sum_{i=1}^{N_d}\hat{y}^{k}_{di}
+$$
+
+Este enfoque permite estimar la probabilidad $\pi^{k}_d$ en el dominio $d$ en la dimensión $k$ utilizando predicciones y datos disponibles en lugar de contar con información individual detallada para todos los casos.
+
+## Pedicción de los Hard estimates  
+
+Hobza y Morales (2016) definen los "hard estimates" como valores binarios (0 o 1) que indican de manera precisa si un individuo tiene o no una característica específica en relación con cada indicador de pobreza multidimensional. Estas estimaciones reflejan la naturaleza binaria de la información, facilitando el cálculo de indicadores y tasas de incidencia de pobreza. Estas estimaciones desempeñan un papel clave en la determinación de la incidencia de la pobreza multidimensional, ya que indican la presencia o ausencia de privaciones en indicadores específicos para cada individuo. Esto plantea un desafío en la estimación, ya que no se trata solo de obtener valores finales, sino de precisar si las características están presentes o no en indicadores faltantes. Con la definición de los *hard estimates*, y sabiendo que la estimación de $\pi^{k}_{di}$ refleja la probabilidad de que una unidad específica $i$ en el dominio $d$ obtenga el valor 1 en la dimensión $k$ se define $\hat{y}^{k}_{di} \sim Bernoulli(\hat{\pi}^{k}_{di})$
+
+
+## Estimación Puntual del Índice de Pobreza Multidimensional (IPM)
+
+Supongamos que el Índice de Pobreza Multidimensional está compuesto por $K$ dimensiones o indicadores para cada individuo $i$ en el censo. El procedimiento propuesto para estimar el IPM es el siguiente:
+
+  1. Utilice los datos de la muestra para ajustar un modelo logit Bernoulli a nivel de unidad para cada indicador. Esto se logra mediante el uso del algoritmo de Markov Chain Monte Carlo (MCMC) con $L$ iteraciones.
+
+  2. Para cada dimensión $k$ a la cual se le para ajustó un modelo logit Bernoulli a nivel de unidad con $L$ iteraciones, realice la predicción de los valores $\hat{y}^{k}_{di}$ para cada individuo en el censo. Esto generará $L$ realizaciones aleatorias de $\hat{y}^{k}_{di}$.
+
+  3. Denotemos como $\hat{y}_{di}^{kl}$ a la $l$-ésima realización aleatoria de la dimensión $k$ para el individuo $i$ en el dominio $d$. Calculamos $q_{di}^{l} = \sum_{k=1}^{K} w_k \cdot y_{di}^{kl}$. Luego, podemos calcular $H_d^{l}$,  $A_d^{l}$ y $IPM_{d}^{l}$ utilizando las ecuaciones:
+
+$$
+IPM_{d}^{l} = \frac{1}{N_d}\sum_{i=1}^{N_{d}}c_{di}^{l}\left(z\right)
+$$
+
+$$
+H_d^{l}=\frac{1}{N_{d}}\sum_{i=1}^{N_{d}}I\left(q_{di}^{l}\ge z\right)=\frac{N_{d}^{l}\left(z\right)}{N_{d}}
+$$
+
+y
+
+$$ 
+A_{d}^{l}=\sum_{i=1}^{N_{d}}\frac{c_{di}^{l}\left(z\right)}{N^{l}_{d}\left(z\right)}
+$$
+
+
+   4. La estimación puntual de $H_d$,  $A_{d}$ y $IPM_{d}$ en cada área pequeña $d$ se calcula tomando el promedio sobre cada una de las $L$ iteraciones: 
+    
+$$
+    \hat{H}_d = \frac{1}{L}\sum_{l=1}^{L}H_d^l, 
+$$
+    
+$$
+        \hat{A}_d = \frac{1}{L}\sum_{l=1}^{L}A_d^l 
+$$
+  y  
+$$
+        \widehat{IPM}_d = \frac{1}{L}\sum_{l=1}^{L}IPM_d^l 
+$$
+    
+  5. Dada que el modelo se estimó usando el algoritmo MCMC, es posible tener la estimación del error de estimación, de esta forma: 
+  
+$$
+  \widehat{Var}(\hat{H}_d) = \frac{1}{L}\sum_{l=1}^{L}\left( H^{l}_{d} -\hat{H}_d \right)^2,
+$$
+  
+$$
+  \widehat{Var}(\hat{A}_d) = \frac{1}{L}\sum_{l=1}^{L}\left( A^{l}_{d} -\hat{A}_d \right)^2
+$$ 
+y
+
+$$
+  \widehat{Var}(\widehat{IPM}_d) = \frac{1}{L}\sum_{l=1}^{L}\left( IPM_d^{l} -\widehat{IPM}_d \right)^2
+$$
+
+
+# Aplicación: Índice de Pobreza Multidimensional en México. 
+
+Nos centramos en la incidencia de la pobreza multidimensional descrito previamente. En este caso, requerimos $K = 9$ indicadores que se miden como privaciones: $y_{di}^{k} = 1$ si la persona tiene la privación y $y_{di}^{k} = 0$ si la persona no ha tenido la privación.
+
+El índice requiere información para cada individuo $i = 1, \ldots, N_d$ en los dominios $d = 1, \ldots, D$, donde $N_d$ denota el tamaño de la población del dominio $d$.
+
+La función indicadora $I(\cdot)$ es igual a 1 cuando se cumple la condición $q_{di} \ge z$. Para este estudio, utilizamos el valor de 0.4 para $z$, es decir, $I(\cdot)$ es igual a 1 cuando $q_{di} \ge 0.4$. $q_{di}$ es una cantidad ponderada que considera los $K = 9$ indicadores que conforman el índice. El valor de $q_{di}$ el dominio $d$ se calcula como:
+
+  
+$$
+  q_{di} = \frac{1}{16}(y_{di}^{1} + y_{di}^{2} + y_{di}^{3} + y_{di}^{4}) + \frac{1}{12}(y_{di}^{5} + y_{di}^{6} + y_{di}^{7}) + \frac{1}{4}(y_{di}^{8} + y_{di}^{9}) 
+$$
+  
+  Donde: 
+  
+  a. $y_{di}^{1}$ = Privación en material de construcción de la vivienda
+
+  b. $y_{di}^{2}$ = Hacinamiento en el hogar. 
+
+  c. $y_{di}^{3}$ = Privación en material de pisos.
+  
+  d. $y_{di}^{3}$ = Privación en material de techos.
+  
+  e. $y_{di}^{3}$ = Privación en el combustible.
+
+  f. $y_{di}^{4}$ = Privación en el servicio energía eléctrica. 
+
+  g. $y_{di}^{5}$ = Privación en saneamiento.
+
+  h. $y_{di}^{6}$ = Privación de acceso al agua potable. 
+  
+  i. $y_{di}^{8}$ = Privación de la educación. 
+
+  
+  
+### Procesamiento del modelo en `R`. 
+El proceso inicia con el cargue de las librerías. 
+
+```{r}
+library(patchwork)
+library(lme4)
+library(tidyverse)
+library(rstan)
+library(rstanarm)
+library(magrittr)
+library(bayesplot)
+library(posterior)
+```
+
+Los datos de la encuesta y el censo han sido preparados previamente, la información sobre la cual realizaremos la predicción corresponde a Colombia en el 2019 
+
+```{r}
+encuesta_ipm <- readRDS("Data/encuestaMEX20_nbi.Rds")
+statelevel_predictors_df <-
+  readRDS("Data/predictors_satelital_dam.rds") 
+byAgrega <- c("dam", "area", "sexo", "etnia", 
+              "anoest", "edad" )
+```
+
+
+
+```{r, eval=FALSE}
+names_ipm <- grep(pattern = "nbi", names(encuesta_ipm),value = TRUE)
+
+encuesta_df <- map(setNames(names_ipm,names_ipm),
+    function(y){
+  encuesta_ipm$temp <- encuesta_ipm[[y]]
+  encuesta_ipm %>% 
+  group_by_at(all_of(byAgrega)) %>%
+  summarise(n = n(),
+            yno = sum(temp),
+            ysi = n - yno, .groups = "drop") %>% 
+    inner_join(statelevel_predictors_df)
+})
+
+  
+```
+
+```{r,echo=FALSE}
+# saveRDS(encuesta_df, "Data/encuesta_df.rds")
+encuesta_df <- readRDS("Data/encuesta_df.rds")
+names_ipm <- names(encuesta_df)
+```
+
+
+#### Privación en material de construcción de la vivienda {-} 
+
+```{r, echo=FALSE}
+tba(encuesta_df[[names_ipm[8]]] %>% arrange(desc(n)) %>% head(), 
+    cap = names_ipm[8])
+```
+
+#### Hacinamiento {-}
+
+```{r, echo=FALSE}
+tba(encuesta_df[[names_ipm[9]]] %>% arrange(desc(n)) %>% head())
+
+```
+
+### Definiendo el modelo multinivel.
+
+Para cada dimensión que compone el IPM se ajusta el siguiente modelo mostrado en el script. En este código se incluye el uso de la función `future_map` que permite procesar en paralelo cada modelo O puede compilar cada por separado.   
+
+```{r, eval = FALSE}
+library(rstanarm)
+
+plan(multisession, workers = 4)
+
+formula_mod <-
+  formula(
+    cbind(yno, ysi) ~
+      (1 | dam) + (1 | etnia) + (1 | edad) +
+      (1 | anoest) + sexo + area +
+      tasa_desocupacion + luces_nocturnas +
+      modificacion_humana
+  )
+
+for(xdat in names(encuesta_df)) {
+  fit <- stan_glmer(
+    formula =  formula_mod,
+    family = binomial(link = "logit"),
+    data = encuesta_df[[xdat]],
+    cores = 4,
+    chains = 4,
+    iter = 1000
+  )
+  saveRDS(object = fit,
+          paste0("/Data/", xdat, ".rds"))
+}
+
+```
+
+Terminado la compilación de los modelos después de realizar validaciones sobre esto, pasamos hacer las predicciones en el censo. 
+
+### Proceso de estimación y predicción
+
+Los modelos fueron compilados de manera separada, por tanto, disponemos de un objeto `.rds` por cada dimensión del IPM 
+
+```{r, eval=FALSE}
+fit_agua <-
+  readRDS(file = "Data/nbi_agua_ee.rds")
+fit_combustible <-
+  readRDS(file = "Data/nbi_combus_ee.rds")
+fit_techo <-
+  readRDS(file = "Data/nbi_techo_ee.rds")
+fit_energia <-
+  readRDS(file = "Data/nbi_elect_ee.rds")
+fit_hacinamiento <-
+  readRDS(file = "Data/nbi_hacina_ee.rds")
+fit_paredes <-
+  readRDS(file = "Data/nbi_pared_ee.rds")
+fit_material <-
+  readRDS(file = "Data/nbi_matviv_ee.rds")
+fit_saneamiento <-
+  readRDS(file = "Data/nbi_saneamiento_ee.rds")
+fit_piso <-
+  readRDS(file = "Data/nbi_piso_ee.rds")
+```
+
+Ahora, debemos leer la información del censo  y crear los **post-estrato **
+```{r}
+censo_ipm <- readRDS("Data/censo_mrp_dam.rds")
+poststrat_df <- censo_ipm %>%
+   group_by_at(byAgrega) %>%
+  summarise(n = sum(n), .groups = "drop") %>% 
+  arrange(desc(n))
+tba(head(poststrat_df))
+```
+
+Para realizar la predicción en el censo debemos incluir la información auxiliar 
+
+```{r}
+poststrat_df <- inner_join(poststrat_df, statelevel_predictors_df)
+dim(poststrat_df)
+
+```
+
+
+-   Privación de acceso al agua potable. 
+
+```{r, eval=FALSE}
+temp <- poststrat_df 
+epred_mat_agua <- posterior_epred(
+  fit_agua,
+  newdata = temp,
+  type = "response",
+  allow.new.levels = TRUE
+)
+```
+
+-   Privación de acceso al combustible para cocinar.
+
+```{r, eval =FALSE}
+epred_mat_combustible <-
+  posterior_epred(
+    fit_combustible,
+    newdata = temp,
+    type = "response",
+    allow.new.levels = TRUE
+  )
+```
+
+-   Privación en material de los techo.
+
+```{r, echo=TRUE, eval=FALSE}
+epred_mat_techo <-
+  posterior_epred(
+    fit_techo,
+    newdata = temp,
+    type = "response",
+    allow.new.levels = TRUE
+  )
+```
+
+-   Acceso al servicio energía eléctrica.
+
+```{r, echo=TRUE, eval=FALSE}
+epred_mat_energia <-
+  posterior_epred(
+    fit_energia,
+    newdata = temp,
+    type = "response",
+    allow.new.levels = TRUE
+  )
+```
+
+-    Hacinamiento en el hogar.
+
+```{r, echo=TRUE, eval=FALSE}
+epred_mat_hacinamiento <-
+  posterior_epred(
+    fit_hacinamiento,
+    newdata = temp,
+    type = "response",
+    allow.new.levels = TRUE
+  )
+```
+
+-   Privación el material de las paredes.
+
+```{r, echo=TRUE, eval=FALSE}
+epred_mat_paredes <-
+  posterior_epred(
+    fit_paredes,
+    newdata = temp,
+    type = "response",
+    allow.new.levels = TRUE
+  )
+```
+
+-   Privación en material de construcción de la vivienda
+
+```{r, echo=TRUE, eval =FALSE}
+epred_mat_material <-
+  posterior_epred(
+    fit_material,
+    newdata = temp,
+    type = "response",
+    allow.new.levels = TRUE
+  )
+```
+
+-   Privación en piso
+
+```{r, echo=TRUE, eval = FALSE}
+epred_mat_piso <-
+  posterior_epred(
+    fit_piso,
+    newdata = temp,
+    type = "response",
+    allow.new.levels = TRUE
+  )
+
+```
+
+-   Privación en saneamiento.
+
+```{r, echo=TRUE, eval = FALSE}
+epred_mat_saneamiento <-
+  posterior_epred(
+    fit_saneamiento,
+    newdata = temp,
+    type = "response",
+    allow.new.levels = TRUE
+  )
+
+```
+
+
+```{r, echo=FALSE, eval=FALSE}
+saveRDS(epred_mat_agua, "Data/epred_mat_agua.rds")
+saveRDS(epred_mat_combustible, "Data/epred_mat_combustible.rds")
+saveRDS(epred_mat_techo, "Data/epred_mat_techo.rds")
+saveRDS(epred_mat_energia, "Data/epred_mat_energia.rds")
+saveRDS(epred_mat_hacinamiento, "Data/epred_mat_hacinamiento.rds")
+saveRDS(epred_mat_paredes, "Data/epred_mat_paredes.rds")
+saveRDS(epred_mat_material, "Data/epred_mat_material.rds")
+saveRDS(epred_mat_piso, "Data/epred_mat_piso.rds")
+saveRDS(epred_mat_saneamiento, "Data/epred_mat_saneamiento.rds")
+```
+
+Los resultados anteriores se deben procesarse en términos de carencia (1) y  no carencia (0) para la $k-esima$ dimensión . 
+
+-    Privación de acceso al agua potable. 
+
+
+```{r,eval=FALSE}
+epred_mat_agua_dummy <-
+  rbinom(n = nrow(epred_mat_agua) * ncol(epred_mat_agua) , 1,
+         epred_mat_agua)
+
+epred_mat_agua_dummy <- matrix(
+  epred_mat_agua_dummy,
+  nrow = nrow(epred_mat_agua),
+  ncol = ncol(epred_mat_agua)
+)
+```
+
+-   Privación de acceso al combustible para cocinar.
+
+
+```{r,eval=FALSE}
+epred_mat_combustible_dummy <-
+  rbinom(n = nrow(epred_mat_combustible) * ncol(epred_mat_combustible) ,
+         1,
+         epred_mat_combustible)
+
+epred_mat_combustible_dummy <- matrix(
+  epred_mat_combustible_dummy,
+  nrow = nrow(epred_mat_combustible),
+  ncol = ncol(epred_mat_combustible)
+)
+```
+
+-    Acceso al servicio energía eléctrica 
+
+
+```{r,eval=FALSE}
+epred_mat_energia_dummy <-
+  rbinom(n = nrow(epred_mat_energia) * ncol(epred_mat_energia) ,
+         1,
+         epred_mat_energia)
+
+epred_mat_energia_dummy <- matrix(
+  epred_mat_energia_dummy,
+  nrow = nrow(epred_mat_energia),
+  ncol = ncol(epred_mat_energia)
+)
+```
+
+-   Hacinamiento en el hogar.
+
+
+```{r,echo = TRUE,eval=FALSE}
+epred_mat_hacinamiento_dummy <-
+  rbinom(
+    n = nrow(epred_mat_hacinamiento) * ncol(epred_mat_hacinamiento) ,
+    1,
+    epred_mat_hacinamiento
+  )
+
+epred_mat_hacinamiento_dummy <-
+  matrix(
+    epred_mat_hacinamiento_dummy,
+    nrow = nrow(epred_mat_hacinamiento),
+    ncol = ncol(epred_mat_hacinamiento)
+  )
+```
+
+-   Privación el material de las paredes.
+
+
+```{r,echo = TRUE,eval=FALSE}
+epred_mat_paredes_dummy <-
+  rbinom(n = nrow(epred_mat_paredes) * ncol(epred_mat_paredes) ,
+         1,
+         epred_mat_paredes)
+
+epred_mat_paredes_dummy <- matrix(
+  epred_mat_paredes_dummy,
+  nrow = nrow(epred_mat_paredes),
+  ncol = ncol(epred_mat_paredes)
+)
+```
+
+-   Privación en material de construcción de la vivienda 
+
+
+```{r, echo = TRUE,eval=FALSE}
+epred_mat_material_dummy <-
+  rbinom(n = nrow(epred_mat_material) * ncol(epred_mat_material) ,
+         1,
+         epred_mat_material)
+
+epred_mat_material_dummy <- matrix(
+  epred_mat_material_dummy,
+  nrow = nrow(epred_mat_material),
+  ncol = ncol(epred_mat_material)
+)
+```
+
+-   Privación en saneamiento. 
+
+
+```{r, echo = TRUE, eval=FALSE}
+epred_mat_saneamiento_dummy <-
+  rbinom(n = nrow(epred_mat_saneamiento) * ncol(epred_mat_saneamiento) ,
+         1,
+         epred_mat_saneamiento)
+
+epred_mat_saneamiento_dummy <- matrix(
+  epred_mat_saneamiento_dummy,
+  nrow = nrow(epred_mat_saneamiento),
+  ncol = ncol(epred_mat_saneamiento)
+)
+```
+
+-   Privación en material de los techo. 
+
+
+```{r, echo = TRUE, eval=FALSE}
+epred_mat_techo_dummy <-
+  rbinom(n = nrow(epred_mat_techo) * ncol(epred_mat_techo) ,
+         1,
+         epred_mat_techo)
+
+epred_mat_techo_dummy <- matrix(
+  epred_mat_techo_dummy,
+  nrow = nrow(epred_mat_techo),
+  ncol = ncol(epred_mat_techo)
+)
+
+```
+
+-   Privación en el material de piso
+
+```{r, echo = TRUE, eval=FALSE}
+epred_mat_piso_dummy <-
+  rbinom(n = nrow(epred_mat_piso) * ncol(epred_mat_piso) ,
+         1,
+         epred_mat_piso)
+
+epred_mat_piso_dummy <- matrix(
+  epred_mat_techo_dummy,
+  nrow = nrow(epred_mat_piso),
+  ncol = ncol(epred_mat_piso)
+)
+
+```
+
+
+```{r, echo=FALSE, eval=FALSE}
+saveRDS(epred_mat_agua_dummy, "Data/epred_mat_agua_dummy.rds")
+saveRDS(epred_mat_combustible_dummy, "Data/epred_mat_combustible_dummy.rds")
+saveRDS(epred_mat_techo_dummy, "Data/epred_mat_techo_dummy.rds")
+saveRDS(epred_mat_energia_dummy, "Data/epred_mat_energia_dummy.rds")
+saveRDS(epred_mat_hacinamiento_dummy, "Data/epred_mat_hacinamiento_dummy.rds")
+saveRDS(epred_mat_paredes_dummy, "Data/epred_mat_paredes_dummy.rds")
+saveRDS(epred_mat_material_dummy, "Data/epred_mat_material_dummy.rds")
+saveRDS(epred_mat_piso_dummy, "Data/epred_mat_piso_dummy.rds")
+saveRDS(epred_mat_saneamiento_dummy, "Data/epred_mat_saneamiento_dummy.rds")
+```
+
+
+Con las variables dummy creadas es posible estimar el IPM 
+
+```{r, eval=FALSE}
+chain_q  <-
+  (1 / 9) * (
+    epred_mat_material_dummy +
+      epred_mat_combustible_dummy +
+      epred_mat_techo_dummy +
+      epred_mat_piso_dummy  +
+      epred_mat_paredes_dummy +
+      epred_mat_saneamiento_dummy +
+      epred_mat_energia_dummy +
+      epred_mat_agua_dummy +
+      epred_mat_hacinamiento_dummy)
+saveRDS(chain_q, "Data/chain_q.rds")
+```
+
+
+Ahora, es posible tener el calculo de $I\left( q_{di}^{l} \ge z \right)$, tomando como umbral $z=0.4$. 
+
+```{r, eval=TRUE}
+chain_Ind <- chain_q
+chain_Ind[chain_Ind < 0.4] <- 0
+chain_Ind[chain_Ind != 0] <- 1
+```
+
+seguidamente calculamos $c_{di}^{l}\left(z\right)$ 
+
+```{r}
+chain_ci <- matrix(0,nrow = nrow(chain_q), ncol = ncol(chain_q))
+chain_ci[chain_Ind == 1] <- chain_q[chain_Ind == 1]
+```
+
+
+```{r, eval=TRUE}
+datos<-data.frame(t(chain_q[1:5,1:10]), t(chain_Ind[1:5,1:10]), t(chain_ci[1:5,1:10]),
+                  N = censo_ipm$n[1:10] )
+colnames(datos) <- c(paste0("q",1:5), paste0("Ind",1:5),paste0("c",1:5),"N")
+tba(datos, "Cadenas obtenidas")
+```
+
+## Estimación de $H$, $A$ e $IPM$
+
+Para este proceso debemos realizar sumas ponderadas, dado que cada registro de la base de datos representa  un grupo de observaciones con las mismas características.  
+
+```{r}
+numIPM <- t(chain_ci) %>%
+  as.data.frame() %>%
+  mutate_all(~ . * poststrat_df$n) %>%
+  as.matrix()
+
+chain_N <- t(chain_Ind) %>%
+  as.data.frame() %>%
+  mutate_all(~ . * poststrat_df$n) %>%
+  as.matrix()
+
+
+IPM_l <- colSums(numIPM)/sum(censo_ipm$n)
+Nz_l <- colSums(chain_N)
+H_l <- Nz_l/sum(censo_ipm$n)
+A_l <- colSums(numIPM)/Nz_l
+```
+
+```{r, echo=FALSE}
+datos_chain <- data.frame(IPM_l,H_l,A_l,HA_l = H_l*A_l) %>% 
+  slice(1:10)
+rownames(datos_chain) <- paste0("l = ", 1:10)
+tba(datos_chain, "l-iteraciones")
+```
+
+
+Por último se realiza las estimaciones puntuales y varianza para $H$, $A$ y $IPM$, esto es:  
+
+```{r}
+estimacion <- data.frame(H = mean(H_l),
+           H_sd = sd(H_l),
+           A = mean(A_l),
+           A_sd = sd(A_l),
+           IPM = mean(IPM_l),
+           IPM_sd = sd(IPM_l))
+```
+
+
+```{r, echo=FALSE}
+tba(estimacion, "Estimaciones Nacionales")
+```
+## Estimaciones desagregadas del IPM
+
+Para realizar las estimaciones desagregadas se desarrollo una función que facilita el calculo, la estructura general el proceso es repetir el proceso anterior por subgrupos, por ejemplo, departamento (*dam*)
+
+```{r}
+source("0Recursos//Estimar_ipm.R")
+ipm_dam <- estime_IPM(
+  poststrat = poststrat_df,
+  chain_ci = chain_ci,
+  chain_ind = chain_ind,
+  byMap = "dam"
+) %>% data.frame()
+```
+
+
+```{r, echo=FALSE}
+tba(ipm_dam, "Estimaciones por estados")
+```
+
+Otra estimación desagregada que es posible obtener es la combinación por departamento y sexo, para ellos se usa la sintaxis. 
+
+
+```{r}
+ipm_dam_sexo <- estime_IPM(
+  poststrat = poststrat_df,
+  chain_ci = chain_ci,
+  chain_ind = chain_ind,
+  byMap = c("dam", "sexo")
+) %>% data.frame()
+
+```
+
+
+```{r, echo=FALSE}
+tba(ipm_dam_sexo, "Estimaciones por estado y sexo")
+```
+
+## Estimaciones por dimension del IPM 
+Dado que el Índice de Pobreza Multidimensional (IPM) está compuesto por diversas dimensiones, resulta fundamental analizar cada una de estas dimensiones de manera individual. Esto permite comprender la naturaleza compleja y multifacética de la pobreza, lo cual a su vez posibilita diseñar estrategias de reducción efectivas. Esta aproximación garantiza una toma de decisiones fundamentada, la distribución eficiente de recursos y un impacto más profundo en la mejora de las condiciones de vida de las personas vulnerables. En este contexto, los "hard estimates" previamente obtenidos para cada dimensión resultan esenciales para obtener las estimaciones correspondientes a cada una de ellas.
+
+El proceso de cálculo se basa en una media ponderada y se aplica a la dimensión de **Hacinamiento**, siguiendo una lógica similar para las demás dimensiones del IPM. 
+Con el objetivo de agilizar el proceso de calculo se define crea la función **agregado_dim_ipm** que hace los cálculos. La forma de uso es la siguiente. 
+
+```{r,}
+source("0Recursos/agregado_dim_ipm.r")
+datos_dam_haci <- agregado_dim_ipm(poststrat = poststrat_df,
+           epredmat = epred_mat_hacinamiento_dummy,
+           byMap = "dam")
+```
+
+
+```{r, echo=FALSE}
+tba(datos_dam_haci, "Estimaciones por departamento para Hacinamiento")
+```
+
+
+El resultado por dam y para todas las dimensiones es calculando usando el sigueinte código.
+
+```{r,eval=FALSE}
+epred_mat_dim <- list(
+  Material = epred_mat_material_dummy,
+  Hacinamiento =    epred_mat_hacinamiento_dummy ,
+  Agua =  epred_mat_agua_dummy,
+  Saneamiento =  epred_mat_saneamiento_dummy,
+  Energia = epred_mat_energia_dummy ,
+  Techo = epred_mat_techo_dummy,
+  Pisos = epred_mat_piso_dummy ,
+  Paredes =  epred_mat_paredes_dummy,
+  Combustible =  epred_mat_combustible_dummy
+)
+
+estimacion_dam_dim <- aux_agregado(epred_mat_dim,
+                                   byx = "dam", 
+                                   censo = poststrat_df) %>%
+  data.frame()
+saveRDS(estimacion_dam_dim,"0Recursos/estimacion_dam_dim.Rds")
+```
+
+
+
+```{r, echo=FALSE}
+estimacion_dam_dim <- readRDS("0Recursos/estimacion_dam_dim.Rds")
+tba(estimacion_dam_dim[1:10],
+    cap = "Estimacion puntual por estado y dimension")
+```
+
+
+```{r, echo=FALSE}
+tba(estimacion_dam_dim[,-c(2:10)],
+    cap = "Error de estimacion por estado y dimension")
+
+```
+
+
+
+
+El siguiente paso es realizar el mapa de los resultados 
+
+```{r, echo=TRUE, eval=FALSE}
+library(sf)
+library(tmap)
+ShapeSAE <- read_sf("Shape/MEX_dam.shp")  
+```
+
+Los resultados nacionales son mostrados en el mapa. 
+
+```{r, echo=TRUE, eval=FALSE}
+maps3 <- tm_shape(ShapeSAE %>%
+                    left_join(ipm_dam,  by = "dam"))
+
+tema_map <- tm_layout(legend.only = FALSE,
+                       legend.height = -0.5,
+                       legend.width = -0.3,
+                       asp = 1.5,
+                       legend.text.size = 5,
+                       legend.title.size = 4)
+
+Mapa_H <-
+  maps3 + tm_polygons(
+    "H",
+    title = "H",
+    palette = "YlOrRd",
+    colorNA = "white"
+  ) + tema_map
+
+Mapa_A <-
+  maps3 + tm_polygons(
+    "A",
+     title = "A",
+    palette = "YlOrRd",
+    colorNA = "white"
+  ) + tema_map
+Mapa_ipm <-
+  maps3 + tm_polygons(
+    "IPM",
+    title = "IPM",
+    palette = "YlOrRd",
+    colorNA = "white"
+  ) + tema_map
+
+
+Mapas <- tmap_arrange(Mapa_H, Mapa_A, Mapa_ipm)
+
+tmap_save(
+  Mapas,
+  "0Recursos/MEX_IPM.jpeg",
+  width = 6920,
+  height = 4080,
+  asp = 0
+)
+
+```
+
+
+```{r echo=FALSE,out.height="400%",fig.align='center'}
+knitr::include_graphics("0Recursos/MEX_IPM.jpeg")
+```
+Los resultado para cada componente puede ser mapeado de forma similar. 
+
+Para obtener el resultado por municipio procedemos así: 
+```{r, echo=FALSE, eval = FALSE}
+estimacion_dim <-
+  estimacion_dam_dim[, c(1:10)] %>% 
+  gather(key = "Indicador", value = "Estimacion", -dam)
+saveRDS(estimacion_dim, "0Recursos/estimacion_dim.rds")
+```
+
+
+```{r, echo=FALSE}
+estimacion_dim <- readRDS("0Recursos/estimacion_dim.rds")
+```
+
+```{r, echo=FALSE, eval = FALSE}
+maps2 <- tm_shape(ShapeSAE %>%
+                           left_join(estimacion_dim,  by = "dam"))
+
+Mapa_ing2 <-
+  maps2 + tm_polygons(
+    "Estimacion",
+    title = "",
+    palette = "YlOrRd",
+    colorNA = "white"
+  ) +
+  tm_facets(by = "Indicador", ncol = 5)
+
+tmap_save(
+  Mapa_ing2,
+  "0Recursos/dim_ipm.png",
+  width = 3000,
+  height = 2000,
+  asp = 0
+)
+
+Mapa_ing2
+
+```
+
+
+```{r echo=FALSE, out.height="400%",fig.align='center'}
+knitr::include_graphics("0Recursos/dim_ipm.png")
+```
