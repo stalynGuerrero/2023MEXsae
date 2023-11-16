@@ -17,7 +17,7 @@ rmd_files: [
 
    "09-D3S1_Modelo_unidad_Estimacion_pobreza_a_partir_ingreso.qmd",
    "10-D3S2_Modelo_unidad_pobreza.qmd",
-  # "11-D3S4_Modelo_unidad_IPM.qmd",
+   "11-D3S3_Modelo_unidad_IPM.qmd",
 
    "12-D3S4_Mercado_del_trabajo.qmd"
 

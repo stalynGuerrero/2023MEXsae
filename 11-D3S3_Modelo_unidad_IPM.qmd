@@ -1,4 +1,4 @@
-# Día 3 - Sesión 4- Estimación del Índice de Privación Multidimensional (IPM)
+# Día 3 - Sesión 3- Estimación del Índice de Privación Multidimensional (IPM)
 
 ```{r setup, include=FALSE, message=FALSE, error=FALSE, warning=FALSE}
 knitr::opts_chunk$set(
@@ -261,7 +261,7 @@ $$
 $$
 
 
-# Aplicación: Índice de Pobreza Multidimensional en México. 
+## Aplicación: Índice de Pobreza Multidimensional en México. 
 
 Nos centramos en la incidencia de la pobreza multidimensional descrito previamente. En este caso, requerimos $K = 9$ indicadores que se miden como privaciones: $y_{di}^{k} = 1$ si la persona tiene la privación y $y_{di}^{k} = 0$ si la persona no ha tenido la privación.
 
@@ -315,9 +315,9 @@ library(posterior)
 Los datos de la encuesta y el censo han sido preparados previamente, la información sobre la cual realizaremos la predicción corresponde a Colombia en el 2019 
 
 ```{r}
-encuesta_ipm <- readRDS("Data/encuestaMEX20_nbi.Rds")
+encuesta_ipm <- readRDS("Recursos/Día3/Sesion3/Data/encuestaMEX20_nbi.Rds")
 statelevel_predictors_df <-
-  readRDS("Data/predictors_satelital_dam.rds") 
+  readRDS("Recursos/Día3/Sesion3/Data/predictors_satelital_dam.rds") 
 byAgrega <- c("dam", "area", "sexo", "etnia", 
               "anoest", "edad" )
 ```
@@ -342,20 +342,20 @@ encuesta_df <- map(setNames(names_ipm,names_ipm),
 ```
 
 ```{r,echo=FALSE}
-# saveRDS(encuesta_df, "Data/encuesta_df.rds")
-encuesta_df <- readRDS("Data/encuesta_df.rds")
+# saveRDS(encuesta_df, "Recursos/Día3/Sesion3/Data/encuesta_df.rds")
+encuesta_df <- readRDS("Recursos/Día3/Sesion3/Data/encuesta_df.rds")
 names_ipm <- names(encuesta_df)
 ```
 
 
-#### Privación en material de construcción de la vivienda {-} 
+### Privación en material de construcción de la vivienda {-} 
 
 ```{r, echo=FALSE}
 tba(encuesta_df[[names_ipm[8]]] %>% arrange(desc(n)) %>% head(), 
     cap = names_ipm[8])
 ```
 
-#### Hacinamiento {-}
+### Hacinamiento {-}
 
 ```{r, echo=FALSE}
 tba(encuesta_df[[names_ipm[9]]] %>% arrange(desc(n)) %>% head())
@@ -390,7 +390,7 @@ for(xdat in names(encuesta_df)) {
     iter = 1000
   )
   saveRDS(object = fit,
-          paste0("/Data/", xdat, ".rds"))
+          paste0("/Recursos/Día3/Sesion3/Data/", xdat, ".rds"))
 }
 
 ```
@@ -403,28 +403,28 @@ Los modelos fueron compilados de manera separada, por tanto, disponemos de un ob
 
 ```{r, eval=FALSE}
 fit_agua <-
-  readRDS(file = "Data/nbi_agua_ee.rds")
+  readRDS(file = "Recursos/Día3/Sesion3/Data/nbi_agua_ee.rds")
 fit_combustible <-
-  readRDS(file = "Data/nbi_combus_ee.rds")
+  readRDS(file = "Recursos/Día3/Sesion3/Data/nbi_combus_ee.rds")
 fit_techo <-
-  readRDS(file = "Data/nbi_techo_ee.rds")
+  readRDS(file = "Recursos/Día3/Sesion3/Data/nbi_techo_ee.rds")
 fit_energia <-
-  readRDS(file = "Data/nbi_elect_ee.rds")
+  readRDS(file = "Recursos/Día3/Sesion3/Data/nbi_elect_ee.rds")
 fit_hacinamiento <-
-  readRDS(file = "Data/nbi_hacina_ee.rds")
+  readRDS(file = "Recursos/Día3/Sesion3/Data/nbi_hacina_ee.rds")
 fit_paredes <-
-  readRDS(file = "Data/nbi_pared_ee.rds")
+  readRDS(file = "Recursos/Día3/Sesion3/Data/nbi_pared_ee.rds")
 fit_material <-
-  readRDS(file = "Data/nbi_matviv_ee.rds")
+  readRDS(file = "Recursos/Día3/Sesion3/Data/nbi_matviv_ee.rds")
 fit_saneamiento <-
-  readRDS(file = "Data/nbi_saneamiento_ee.rds")
+  readRDS(file = "Recursos/Día3/Sesion3/Data/nbi_saneamiento_ee.rds")
 fit_piso <-
-  readRDS(file = "Data/nbi_piso_ee.rds")
+  readRDS(file = "Recursos/Día3/Sesion3/Data/nbi_piso_ee.rds")
 ```
 
 Ahora, debemos leer la información del censo  y crear los **post-estrato **
 ```{r}
-censo_ipm <- readRDS("Data/censo_mrp_dam.rds")
+censo_ipm <- readRDS("Recursos/Día3/Sesion3/Data/censo_mrp_dam.rds")
 poststrat_df <- censo_ipm %>%
    group_by_at(byAgrega) %>%
   summarise(n = sum(n), .groups = "drop") %>% 
@@ -553,15 +553,15 @@ epred_mat_saneamiento <-
 
 
 ```{r, echo=FALSE, eval=FALSE}
-saveRDS(epred_mat_agua, "Data/epred_mat_agua.rds")
-saveRDS(epred_mat_combustible, "Data/epred_mat_combustible.rds")
-saveRDS(epred_mat_techo, "Data/epred_mat_techo.rds")
-saveRDS(epred_mat_energia, "Data/epred_mat_energia.rds")
-saveRDS(epred_mat_hacinamiento, "Data/epred_mat_hacinamiento.rds")
-saveRDS(epred_mat_paredes, "Data/epred_mat_paredes.rds")
-saveRDS(epred_mat_material, "Data/epred_mat_material.rds")
-saveRDS(epred_mat_piso, "Data/epred_mat_piso.rds")
-saveRDS(epred_mat_saneamiento, "Data/epred_mat_saneamiento.rds")
+saveRDS(epred_mat_agua, "Recursos/Día3/Sesion3/Data/epred_mat_agua.rds")
+saveRDS(epred_mat_combustible, "Recursos/Día3/Sesion3/Data/epred_mat_combustible.rds")
+saveRDS(epred_mat_techo, "Recursos/Día3/Sesion3/Data/epred_mat_techo.rds")
+saveRDS(epred_mat_energia, "Recursos/Día3/Sesion3/Data/epred_mat_energia.rds")
+saveRDS(epred_mat_hacinamiento, "Recursos/Día3/Sesion3/Data/epred_mat_hacinamiento.rds")
+saveRDS(epred_mat_paredes, "Recursos/Día3/Sesion3/Data/epred_mat_paredes.rds")
+saveRDS(epred_mat_material, "Recursos/Día3/Sesion3/Data/epred_mat_material.rds")
+saveRDS(epred_mat_piso, "Recursos/Día3/Sesion3/Data/epred_mat_piso.rds")
+saveRDS(epred_mat_saneamiento, "Recursos/Día3/Sesion3/Data/epred_mat_saneamiento.rds")
 ```
 
 Los resultados anteriores se deben procesarse en términos de carencia (1) y  no carencia (0) para la $k-esima$ dimensión . 
@@ -715,15 +715,15 @@ epred_mat_piso_dummy <- matrix(
 
 
 ```{r, echo=FALSE, eval=FALSE}
-saveRDS(epred_mat_agua_dummy, "Data/epred_mat_agua_dummy.rds")
-saveRDS(epred_mat_combustible_dummy, "Data/epred_mat_combustible_dummy.rds")
-saveRDS(epred_mat_techo_dummy, "Data/epred_mat_techo_dummy.rds")
-saveRDS(epred_mat_energia_dummy, "Data/epred_mat_energia_dummy.rds")
-saveRDS(epred_mat_hacinamiento_dummy, "Data/epred_mat_hacinamiento_dummy.rds")
-saveRDS(epred_mat_paredes_dummy, "Data/epred_mat_paredes_dummy.rds")
-saveRDS(epred_mat_material_dummy, "Data/epred_mat_material_dummy.rds")
-saveRDS(epred_mat_piso_dummy, "Data/epred_mat_piso_dummy.rds")
-saveRDS(epred_mat_saneamiento_dummy, "Data/epred_mat_saneamiento_dummy.rds")
+saveRDS(epred_mat_agua_dummy, "Recursos/Día3/Sesion3/Data/epred_mat_agua_dummy.rds")
+saveRDS(epred_mat_combustible_dummy, "Recursos/Día3/Sesion3/Data/epred_mat_combustible_dummy.rds")
+saveRDS(epred_mat_techo_dummy, "Recursos/Día3/Sesion3/Data/epred_mat_techo_dummy.rds")
+saveRDS(epred_mat_energia_dummy, "Recursos/Día3/Sesion3/Data/epred_mat_energia_dummy.rds")
+saveRDS(epred_mat_hacinamiento_dummy, "Recursos/Día3/Sesion3/Data/epred_mat_hacinamiento_dummy.rds")
+saveRDS(epred_mat_paredes_dummy, "Recursos/Día3/Sesion3/Data/epred_mat_paredes_dummy.rds")
+saveRDS(epred_mat_material_dummy, "Recursos/Día3/Sesion3/Data/epred_mat_material_dummy.rds")
+saveRDS(epred_mat_piso_dummy, "Recursos/Día3/Sesion3/Data/epred_mat_piso_dummy.rds")
+saveRDS(epred_mat_saneamiento_dummy, "Recursos/Día3/Sesion3/Data/epred_mat_saneamiento_dummy.rds")
 ```
 
 
@@ -741,14 +741,14 @@ chain_q  <-
       epred_mat_energia_dummy +
       epred_mat_agua_dummy +
       epred_mat_hacinamiento_dummy)
-saveRDS(chain_q, "Data/chain_q.rds")
+saveRDS(chain_q, "Recursos/Día3/Sesion3/Data/chain_q.rds")
 ```
 
 
 Ahora, es posible tener el calculo de $I\left( q_{di}^{l} \ge z \right)$, tomando como umbral $z=0.4$. 
 
 ```{r, eval=TRUE}
-chain_q <- readRDS("Data/chain_q.rds")
+chain_q <- readRDS("Recursos/Día3/Sesion3/Data/chain_q.rds")
 chain_Ind <- chain_q
 chain_Ind[chain_Ind < 0.4] <- 0
 chain_Ind[chain_Ind != 0] <- 1
@@ -819,7 +819,7 @@ tba(estimacion, "Estimaciones Nacionales")
 Para realizar las estimaciones desagregadas se desarrollo una función que facilita el calculo, la estructura general el proceso es repetir el proceso anterior por subgrupos, por ejemplo, departamento (*dam*)
 
 ```{r}
-source("0Recursos//Estimar_ipm.R")
+source("Recursos/Día3/Sesion3/0Recursos//Estimar_ipm.R")
 ipm_dam <- estime_IPM(
   poststrat = poststrat_df,
   chain_ci = chain_ci,
@@ -858,8 +858,8 @@ El proceso de cálculo se basa en una media ponderada y se aplica a la dimensió
 Con el objetivo de agilizar el proceso de calculo se define crea la función **agregado_dim_ipm** que hace los cálculos. La forma de uso es la siguiente. 
 
 ```{r,}
-source("0Recursos/agregado_dim_ipm.r")
-epred_mat_hacinamiento_dummy <- readRDS( "Data/epred_mat_hacinamiento_dummy.rds")
+source("Recursos/Día3/Sesion3/0Recursos/agregado_dim_ipm.r")
+epred_mat_hacinamiento_dummy <- readRDS( "Recursos/Día3/Sesion3/Data/epred_mat_hacinamiento_dummy.rds")
 
 datos_dam_haci <- agregado_dim_ipm(poststrat = poststrat_df,
            epredmat = epred_mat_hacinamiento_dummy,
@@ -891,13 +891,13 @@ estimacion_dam_dim <- aux_agregado(epred_mat_dim,
                                    byx = "dam", 
                                    censo = poststrat_df) %>%
   data.frame()
-saveRDS(estimacion_dam_dim,"0Recursos/estimacion_dam_dim.Rds")
+saveRDS(estimacion_dam_dim,"Recursos/Día3/Sesion3/0Recursos/estimacion_dam_dim.Rds")
 ```
 
 
 
 ```{r, echo=FALSE}
-estimacion_dam_dim <- readRDS("0Recursos/estimacion_dam_dim.Rds")
+estimacion_dam_dim <- readRDS("Recursos/Día3/Sesion3/0Recursos/estimacion_dam_dim.Rds")
 tba(estimacion_dam_dim[1:10],
     cap = "Estimacion puntual por estado y dimension")
 ```
@@ -917,7 +917,7 @@ El siguiente paso es realizar el mapa de los resultados
 ```{r, echo=TRUE, eval=FALSE}
 library(sf)
 library(tmap)
-ShapeSAE <- read_sf("Shape/MEX_dam.shp")  
+ShapeSAE <- read_sf("Recursos/Día3/Sesion3/Shape/MEX_dam.shp")  
 ```
 
 Los resultados nacionales son mostrados en el mapa. 
@@ -961,7 +961,7 @@ Mapas <- tmap_arrange(Mapa_H, Mapa_A, Mapa_ipm)
 
 tmap_save(
   Mapas,
-  "0Recursos/MEX_IPM.jpeg",
+  "Recursos/Día3/Sesion3/0Recursos/MEX_IPM.jpeg",
   width = 6920,
   height = 4080,
   asp = 0
@@ -971,7 +971,7 @@ tmap_save(
 
 
 ```{r echo=FALSE,out.height="400%",fig.align='center'}
-knitr::include_graphics("0Recursos/MEX_IPM.jpeg")
+knitr::include_graphics("Recursos/Día3/Sesion3/0Recursos/MEX_IPM.jpeg")
 ```
 Los resultado para cada componente puede ser mapeado de forma similar. 
 
@@ -980,12 +980,12 @@ Para obtener el resultado por municipio procedemos así:
 estimacion_dim <-
   estimacion_dam_dim[, c(1:10)] %>% 
   gather(key = "Indicador", value = "Estimacion", -dam)
-saveRDS(estimacion_dim, "0Recursos/estimacion_dim.rds")
+saveRDS(estimacion_dim, "Recursos/Día3/Sesion3/0Recursos/estimacion_dim.rds")
 ```
 
 
 ```{r, echo=FALSE}
-estimacion_dim <- readRDS("0Recursos/estimacion_dim.rds")
+estimacion_dim <- readRDS("Recursos/Día3/Sesion3/0Recursos/estimacion_dim.rds")
 ```
 
 ```{r, echo=FALSE, eval = FALSE}
@@ -1003,7 +1003,7 @@ Mapa_ing2 <-
 
 tmap_save(
   Mapa_ing2,
-  "0Recursos/dim_ipm.png",
+  "Recursos/Día3/Sesion3/0Recursos/dim_ipm.png",
   width = 3000,
   height = 2000,
   asp = 0
@@ -1015,5 +1015,5 @@ Mapa_ing2
 
 
 ```{r echo=FALSE, out.height="400%",fig.align='center'}
-knitr::include_graphics("0Recursos/dim_ipm.png")
+knitr::include_graphics("Recursos/Día3/Sesion3/0Recursos/dim_ipm.png")
 ```
