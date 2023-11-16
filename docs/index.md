@@ -1,7 +1,7 @@
 --- 
 title: "Fortalecimiento de capacidades en Técnicas de Estimación en Áreas Pequeñas con enfoque Bayesiano para la desagregación de datos"
 author: "Andrés Gutiérrez^[Experto Regional en Estadísticas Sociales - Comisión Económica para América Latina y el Caribe (CEPAL) -  andres.gutierrez@cepal.org], Stalyn Guerrero^[Consultor - Comisión Económica para América Latina y el Caribe (CEPAL), guerrerostalyn@gmail.com]"
-date: "2023-10-23"
+date: "2023-11-16"
 documentclass: book
 # bibliography: [CEPAL.bib]
 biblio-style: apalike
